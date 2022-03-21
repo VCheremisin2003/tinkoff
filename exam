@@ -24,10 +24,10 @@ union
 select *
 from flights
 join (select * from planes where cargo_flg = 0) as civil_aircraft on flights.plane_id = civil_aircraft.plane_id
-join pilots on pilots.pilot_id = second.first_pilot_id
+join pilots on pilots.pilot_id = flights.second_pilot_id
 )
 
-select distinct base_data.name
+select distinct base_data.name, base
 from base_data
 where 1=1
 	and quantity > 30
