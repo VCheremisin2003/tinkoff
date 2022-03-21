@@ -1,0 +1,49 @@
+№1
+select 
+t2.pilot_id,
+t2.name
+from рейсы t1
+inner join пилоты t2
+on t1.second_pilot_id = t2.pilot_id
+and t1.flight_dt between ‘2022-08-01’ and ‘2022-08-31’
+and t1.destination like ‘%Шереметьево%’
+
+group by 1,2
+having count(distinct t1.flight_id) = 3
+
+№2
+with base_data as (
+(
+select *
+from flights
+join (select plane_id from planes where cargo_flg = 0) as civil_aircraft on flights.plane_id = civil_aircraft.plane_id
+join pilots on pilots.pilot_id = flights.first_pilot_id
+)
+union
+(
+select *
+from flights
+join (select * from planes where cargo_flg = 0) as civil_aircraft on flights.plane_id = civil_aircraft.plane_id
+join pilots on pilots.pilot_id = second.first_pilot_id
+)
+
+select distinct base_data.name
+from base_data
+where 1=1
+	and quantity > 30
+	and age > 45
+
+№3
+with base_data as (
+select 
+	name,
+	count(*) as counter
+from flights
+join (select plane_id from planes where cargo_flg = 1) as cargo_aircraft on flights.plane_id = cargo_aircraft.plane_id
+join pilots on pilots.pilot_id = flights.first_pilot_id
+group by name
+order by counter desc
+limit 10
+)
+
+select name from base_data
